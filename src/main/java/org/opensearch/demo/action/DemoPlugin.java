@@ -22,17 +22,23 @@ import org.opensearch.plugins.ActionPlugin;
 import org.opensearch.plugins.Plugin;
 import org.opensearch.plugins.SearchPlugin;
 import org.opensearch.rest.RestController;
+import org.opensearch.rest.RestHandler;
 
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * Plugin class registering various items which will be provided by this plugin.
+ */
 @Log4j2
 public class DemoPlugin extends Plugin implements ActionPlugin, SearchPlugin {
+    /**
+     * @return A {@link List} of {@link RestHandler}s which will be registered by this plugin.
+     */
     @Override
-    public List getRestHandlers(final Settings settings, final RestController restController,
+    public List<RestHandler> getRestHandlers(final Settings settings, final RestController restController,
             final ClusterSettings clusterSettings, final IndexScopedSettings indexScopedSettings,
             final SettingsFilter settingsFilter, final IndexNameExpressionResolver indexNameExpressionResolver,
             final Supplier nodesInCluster) {
-
         return Collections.singletonList(new RestDemoAction());
     }
 
@@ -45,8 +51,7 @@ public class DemoPlugin extends Plugin implements ActionPlugin, SearchPlugin {
         log.info("Registering the aggregations [{}] from HelloWorldPlugin.", PrimeNumberCountAggregationBuilder.NAME);
         final AggregationSpec spec =
                 new AggregationSpec(PrimeNumberCountAggregationBuilder.NAME, PrimeNumberCountAggregationBuilder::new,
-                        PrimeNumberCountAggregationBuilder.PARSER).addResultReader(InternalPrimeCount::new)
-                        .setAggregatorRegistrar(PrimeNumberCountAggregationBuilder::registerAggregators);
+                        PrimeNumberCountAggregationBuilder.PARSER).addResultReader(InternalPrimeCount::new).setAggregatorRegistrar(PrimeNumberCountAggregationBuilder::registerAggregators);
         return Collections.singletonList(spec);
     }
 

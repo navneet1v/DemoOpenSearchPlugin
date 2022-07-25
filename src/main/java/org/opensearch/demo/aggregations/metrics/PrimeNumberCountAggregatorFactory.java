@@ -24,6 +24,9 @@ import org.opensearch.search.aggregations.support.ValuesSourceRegistry;
 import org.opensearch.search.aggregations.support.ValuesSourceType;
 import org.opensearch.search.internal.SearchContext;
 
+/**
+ * A factory class that helps in building the Aggregator for the specific aggregation.
+ */
 public class PrimeNumberCountAggregatorFactory extends ValuesSourceAggregatorFactory {
 
     public PrimeNumberCountAggregatorFactory(final String name, final ValuesSourceConfig config,

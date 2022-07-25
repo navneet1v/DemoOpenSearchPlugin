@@ -8,8 +8,6 @@
 package org.opensearch.demo.action;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.opensearch.client.node.NodeClient;
@@ -17,10 +15,18 @@ import org.opensearch.rest.BaseRestHandler;
 import org.opensearch.rest.BytesRestResponse;
 import org.opensearch.rest.RestRequest;
 
+/**
+ * This is RestAction which handles the incoming request for the URLs registered via routes() . There can be many
+ * rest action, which a plugin can register. In OpenSearch we call Handlers as Action. But this is just a name which
+ * has stick around.
+ */
 public class RestDemoAction extends BaseRestHandler {
+    private static final String HELLO_WORLD_ROUTE_PATH = "/_plugins/hello_world";
+    private static final String HANDLER_OR_ACTION_NAME = "rest_handler_of_hello_world";
+
     @Override
     public String getName() {
-        return "rest_handler_of_hello_world";
+        return HANDLER_OR_ACTION_NAME;
     }
 
     @Override
@@ -36,11 +42,14 @@ public class RestDemoAction extends BaseRestHandler {
         };
     }
 
+    /**
+     * List of Routes to be handled by this Hanlder/Action
+     *
+     * @return A {@link List} of {@link Route}s
+     */
     @Override
     public List<Route> routes() {
-        List<Route> routeList = new ArrayList<>();
-        routeList.add(new Route(RestRequest.Method.GET, "/_plugins/hello_world"));
-        routeList.add(new Route(RestRequest.Method.POST, "/_plugins/hello_world"));
-        return Collections.unmodifiableList(routeList);
+        return List.of(new Route(RestRequest.Method.GET, HELLO_WORLD_ROUTE_PATH),
+                new Route(RestRequest.Method.POST, HELLO_WORLD_ROUTE_PATH));
     }
 }

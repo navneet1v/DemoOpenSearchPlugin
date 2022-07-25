@@ -11,11 +11,15 @@ import org.opensearch.rest.BytesRestResponse;
 import org.opensearch.rest.RestResponse;
 import org.opensearch.rest.RestStatus;
 
+/**
+ * A test service
+ */
 public class DemoService {
 
     public static RestResponse buildResponse(String name) {
-        String space = name.isEmpty()? "" : " ";
-        final String message = "Hi" + space + name + "! Your plugin is installed and working:)";
-        return new BytesRestResponse(RestStatus.OK, message);
+        final String space = name.isEmpty() ? "" : " ";
+        final StringBuilder sb = new StringBuilder().append("Hi").append(space).append(name)
+                .append("! Your plugin is" + " installed and working:)");
+        return new BytesRestResponse(RestStatus.OK, sb.toString());
     }
 }

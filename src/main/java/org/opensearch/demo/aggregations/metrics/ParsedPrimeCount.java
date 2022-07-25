@@ -18,11 +18,14 @@ import org.opensearch.search.aggregations.metrics.ParsedSingleValueNumericMetric
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * Representation of the Aggregation result which is displayed to the client. In this case we are using this to
+ * represent the count of primes numbered values of an integer field in an index.
+ */
 @NoArgsConstructor
 @Log4j2
 public class ParsedPrimeCount extends ParsedSingleValueNumericMetricsAggregation implements PrimeCount {
-    private static final ObjectParser<ParsedPrimeCount, Void> PARSER =
-            new ObjectParser(ParsedPrimeCount.class.getSimpleName(), true, ParsedPrimeCount::new);
+    private static final ObjectParser<ParsedPrimeCount, Void> PARSER = new ObjectParser(ParsedPrimeCount.class.getSimpleName(), true, ParsedPrimeCount::new);
 
     /**
      * The count

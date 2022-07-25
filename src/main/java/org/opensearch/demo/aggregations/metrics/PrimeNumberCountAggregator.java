@@ -27,6 +27,11 @@ import org.opensearch.search.internal.SearchContext;
 
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * This is main Aggregation logic class for the Prime Numbers count. This class provides various functions to build
+ * and aggregate the things which we are trying to achieve via an aggregation. This logic runs at per Data Node's
+ * Lucene shard level.
+ */
 @Log4j2
 public class PrimeNumberCountAggregator extends MetricsAggregator {
 
@@ -39,12 +44,12 @@ public class PrimeNumberCountAggregator extends MetricsAggregator {
     private IntArray primeCounts;
 
     public PrimeNumberCountAggregator(String name, ValuesSourceConfig valuesSourceConfig, SearchContext context,
-            Aggregator parent,
-            Map<String, Object> metadata) throws IOException {
+            Aggregator parent, Map<String, Object> metadata) throws IOException {
         super(name, context, parent, metadata);
         this.format = valuesSourceConfig.format();
-        this.valuesSource = valuesSourceConfig.hasValues()? (ValuesSource.Numeric)valuesSourceConfig.getValuesSource() : null;
-        if(valuesSource != null) {
+        this.valuesSource =
+                valuesSourceConfig.hasValues() ? (ValuesSource.Numeric) valuesSourceConfig.getValuesSource() : null;
+        if (valuesSource != null) {
             primeCounts = context.bigArrays().newIntArray(1L, true);
         }
     }
@@ -52,7 +57,8 @@ public class PrimeNumberCountAggregator extends MetricsAggregator {
     @Override
     public InternalAggregation buildAggregation(long bucket) throws IOException {
         if (valuesSource != null && bucket < primeCounts.size()) {
-            log.info("In the buildAggregation function {} to build internal aggregation", this.primeCounts.get(bucket));
+            log.debug("In the buildAggregation function {} to build internal aggregation",
+                    this.primeCounts.get(bucket));
             return new InternalPrimeCount(name, primeCounts.get(bucket), format, metadata());
         } else {
             return buildEmptyAggregation();
@@ -61,7 +67,7 @@ public class PrimeNumberCountAggregator extends MetricsAggregator {
 
     @Override
     protected LeafBucketCollector getLeafCollector(LeafReaderContext leafReaderContext, LeafBucketCollector leafBucketCollector) throws IOException {
-        log.info("Entering the LeafCollector function for the PrimeNumberCountAggregation");
+        log.debug("Entering the LeafCollector function for the PrimeNumberCountAggregation");
         if(valuesSource == null) {
             return LeafBucketCollector.NO_OP_COLLECTOR;
         }
@@ -133,7 +139,7 @@ public class PrimeNumberCountAggregator extends MetricsAggregator {
                 return false;
             }
         }
-        log.info("The number {} is prime.", number);
+        log.debug("The number {} is prime.", number);
         return true;
     }
 
