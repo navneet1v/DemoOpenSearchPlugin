@@ -1,0 +1,17 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * The OpenSearch Contributors require contributions made to
+ * this file be licensed under the Apache-2.0 license or a
+ * compatible open source license.
+ */
+
+/**
+ * You just need to apply this plugin for running the integration test. This is another way of running integration
+ * tests, which uses an internal cluster defined in the main OpenSearch Repo.
+ * For this make sure that your tests are added in a module named as internalClusterTest which should be under src.
+ */
+apply plugin: 'opensearch.internal-cluster-test'
+
+// This is to disable the tests.
+internalClusterTest.enabled(false)
