@@ -9,16 +9,21 @@ package org.opensearch.demo.action;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 import org.opensearch.cluster.metadata.IndexNameExpressionResolver;
+import org.opensearch.common.collect.MapBuilder;
 import org.opensearch.common.settings.ClusterSettings;
 import org.opensearch.common.settings.IndexScopedSettings;
 import org.opensearch.common.settings.Settings;
 import org.opensearch.common.settings.SettingsFilter;
 import org.opensearch.demo.aggregations.metrics.InternalPrimeCount;
 import org.opensearch.demo.aggregations.metrics.PrimeNumberCountAggregationBuilder;
+import org.opensearch.demo.processor.NLPProcessor;
+import org.opensearch.ingest.Processor;
 import org.opensearch.plugins.ActionPlugin;
+import org.opensearch.plugins.IngestPlugin;
 import org.opensearch.plugins.Plugin;
 import org.opensearch.plugins.SearchPlugin;
 import org.opensearch.rest.RestController;
@@ -30,7 +35,7 @@ import lombok.extern.log4j.Log4j2;
  * Plugin class registering various items which will be provided by this plugin.
  */
 @Log4j2
-public class DemoPlugin extends Plugin implements ActionPlugin, SearchPlugin {
+public class DemoPlugin extends Plugin implements ActionPlugin, SearchPlugin, IngestPlugin {
     /**
      * @return A {@link List} of {@link RestHandler}s which will be registered by this plugin.
      */
@@ -51,8 +56,14 @@ public class DemoPlugin extends Plugin implements ActionPlugin, SearchPlugin {
         log.info("Registering the aggregations [{}] from HelloWorldPlugin.", PrimeNumberCountAggregationBuilder.NAME);
         final AggregationSpec spec =
                 new AggregationSpec(PrimeNumberCountAggregationBuilder.NAME, PrimeNumberCountAggregationBuilder::new,
-                        PrimeNumberCountAggregationBuilder.PARSER).addResultReader(InternalPrimeCount::new).setAggregatorRegistrar(PrimeNumberCountAggregationBuilder::registerAggregators);
+                        PrimeNumberCountAggregationBuilder.PARSER).addResultReader(InternalPrimeCount::new)
+                        .setAggregatorRegistrar(PrimeNumberCountAggregationBuilder::registerAggregators);
         return Collections.singletonList(spec);
     }
 
+    @Override
+    public Map<String, Processor.Factory> getProcessors(final Processor.Parameters parameters) {
+        return MapBuilder.<String, Processor.Factory>newMapBuilder()
+                .put(NLPProcessor.TYPE, new NLPProcessor.Factory(parameters.client)).immutableMap();
+    }
 }
